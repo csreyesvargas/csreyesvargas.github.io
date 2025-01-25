@@ -1,14 +1,12 @@
 ```mermaid
 flowchart TD
-Start([Start]) --> GenerateRandom[Generate Random Number]
-GenerateRandom --> EnterYourGuess[Enter Your Guess]
-EnterYourGuess --> IsGuessCorrect{Is Guess Correct?}
-IsGuessCorrect --> |YES|
-IsGuessCorrect --> |NO|
-YES --> Win[You Win]
-NO --> Show[Show: Too High, or Too Low]
-Show --> EnterYourGuess
-YES --> End([End])
+    Start([Start]) --> GenerateRandom[Generate Random Number]
+    GenerateRandom --> EnterYourGuess[Enter Your Guess]
+    EnterYourGuess --> IsGuessCorrect{Is Guess Correct?}
+    IsGuessCorrect -->|Yes| Win[You Win]
+    IsGuessCorrect -->|No| Show[Show: Too High, or Too Low]
+    Show --> EnterYourGuess
+    Win --> End([End])
 ```
 
 1. Start the Game.
