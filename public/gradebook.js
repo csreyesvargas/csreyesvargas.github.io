@@ -1,17 +1,77 @@
 // TODO: Fetch data from the PostgreSQL database (to be implemented later)
-function fetchGradeData () {
+function fetchGradeData() {
     //This function will query the PostgreSQL database and return grade data 
     console.log("Fetching grade data...");
+    // Create a new request for HTTP data
+    let xhr = new XMLHttpRequest();
+    // This is the address on the machine we're asking for data
+    let apiRoute = "http://localhost:3000/api/grades";
+    // When the request changes status, we run this anonymus function
+    xhr.onreadystatechange = function () {
+        let results;
+        // Check if we're done
+        if (xhr.readyState === xhr.DONE) {
+            //Check if we're succesful
+            if (xhr.status !== 200) {
+                console.error(`Could not get grades. Status: ${xhr.status}`);
+            }
+            // Add then call the function to update the HTML with our data
+            populateGradebook(JSON.parse(xhr.responseText));
+        }
+
+        return results; // Bugfix: resolve error by adding return statment for results 
+    }.bind(this);
+    xhr.open("get", apiRoute, false); // Bugfix: resolve error by changing async to false
+    xhr.send();
+
 }
 
 // TODO: Populate the table with grade data
 function populateGradebook(data) {
     // This functions will take the fetched grade data and populate the table
     console.log("Populating gradebook with data:", data);
+    let tableElm = document.getElementById("gradebook"); // Get the gradebook table element
+    data.forEach(function (assignment) { // For each row of data we're passed in 
+        let row = document.createElement("tr"); // create a table row element
+        let columns = []; // Handy place to stick the columns of information
+        columns.name = document.createElement('td'); // The first column's table data will be the same
+        columns.name.appendChild(
+            // Concatenate the full name: "last_name, first_name"
+            document.createTextNode(assignment.last_name + "," + assignment.first_name)
+        );
+        columns.grade = document.createElement('td'); // second column will be the grade
+        columns.grade.appendChild(
+            // Just put the name in text, you could be fancy and figure out the letter grade here
+            // with either a bunch of conditions, or a JavaScript "switch" statement
+            document.createTextNode(assignment.grade)
+        );
+
+        columns.assignment_1 = document.createElement('td');
+        columns.assignment_1.appendChild(
+            document.createTextNode(assignment.assignment_1)
+        );
+
+        columns.assignment_2 = document.createElement('td');
+        columns.assignment_2.appendChild(
+            document.createTextNode(assignment.assignment_2)
+        );
+
+        columns.assignment_3 = document.createElement('td');
+        columns.assignment_3.appendChild(
+            document.createTextNode(assignment.assignment_3)
+        );
+
+        // Add the table data columns to the table row
+        row.appendChild(columns.name);
+        row.appendChild(columns.grade);
+        row.appendChild(columns.assignment_1);
+        row.appendChild(columns.assignment_2);
+        row.appendChild(columns.assignment_3);
+        // Add the row to the table itself to make the data visible
+        tableElm.appendChild(row);
+    });
 }
 
-// TODO REMOVE THIS
-// Call the stubs to demonstrate the workflow
-const gradeData = fetchGradeData();
-populateGradebook(gradeData);
-//END REMOVE
+
+// Bugfix: using the content loaded listner makes sure that the code only runs after the HTML is loaded, so that the table exists bbefore the code tries to populate it
+document.addEventListener('DOMContentLoaded', fetchGradeData);
